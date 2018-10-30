@@ -1,0 +1,34 @@
+/**
+ *
+ * @desc  获取网页大小,包括视口和页面大小，注意不包括border和滚动条占用的空间，只包含内边距
+ * @param {String} type: viewport(default) | pagearea
+ * @returns { {width: number, height: number} }
+ */
+export default function getSize(type) {
+  const HtmlElement = getHtmlElementFromCompatMode();
+  /**
+   *获取页面的大小，若出现滚动条，包含滚动条滚动的内容在内的的该元素的视觉面积，
+   否则等于网页的clientWidth和scrollWidth，但是实际上，不同浏览器有不同的处理，
+   这两个值未必相等。所以，我们需要取它们之中较大的那个值
+   */
+  if (type === "pagearea") {
+    return {
+      width: Math.max(HtmlElement.scrollWidth, HtmlElement.clientWidth),
+      height: Math.max(HtmlElement.scrollHeight, HtmlElement.clientHeight)
+    };
+  }
+  // 指在浏览器窗口中看到的那部分网页面积，又叫做viewport（视口）
+  else {
+    return {
+      width: HtmlElement.clientWidth,
+      height: HtmlElement.clientHeight
+    };
+  }
+}
+
+//根据document.compatMode来判断当前浏览器采用的渲染方式，从而返回一个能够返回正确的页面宽高的元素对象
+function getHtmlElementFromCompatMode() {
+  return document.compatMode === "BackCompat"
+    ? document.body
+    : document.documentElement;
+}
